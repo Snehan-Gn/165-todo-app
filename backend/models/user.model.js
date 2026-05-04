@@ -1,29 +1,26 @@
-module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define('user', {
+const mongoose = require('mongoose');
+
+const userSchema = new mongoose.Schema(
+  {
     email: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
       unique: true,
-      validate: {
-        isEmail: true
-      }
+      lowercase: true,
+      match: [/^\S+@\S+\.\S+$/, 'Veuillez entrer un email valide']
     },
     password: {
-      type: DataTypes.STRING,
-      allowNull: false
+      type: String,
+      required: true
     },
-    name: {
-      type: DataTypes.STRING
-    },
-    address: {
-      type: DataTypes.STRING
-    },
-    zip: {
-      type: DataTypes.INTEGER
-    },
-    location: {
-      type: DataTypes.STRING
-    }
-  });
-  return User;
-};
+    name: String,
+    address: String,
+    zip: Number,
+    location: String
+  },
+  {
+    timestamps: true 
+  }
+);
+
+module.exports = mongoose.model('User', userSchema);

@@ -5,8 +5,8 @@ const { JWT_SECRET } = require('../config/keys');
 
 // remove password from user object
 const cleanUser = (user) => {
-  // eslint-disable-next-line no-unused-vars
-  const { password, ...cleanedUser } = user.get({ plain: true });
+  const userObj = user.toObject();
+  const { password, __v, ...cleanedUser } = userObj;
   return cleanedUser;
 };
 

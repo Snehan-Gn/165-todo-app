@@ -2,12 +2,15 @@
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const mongoose = require('mongoose');
+const { createClient } = require('redis');
 
 // Load env vars
 process.loadEnvFile('./.env');
 
-const { sequelize: db } = require('./config/database');
-const { initModels } = require('./models');
+// const { sequelize: db } = require('./config/database');
+// const { initModels } = require('./models');
+const models = require('./models');
 const router = require('./routes');
 
 const PORT = process.env.PORT || '3000';
@@ -15,6 +18,7 @@ const ENV = process.env.NODE_ENV || 'development';
 
 let app; // singleton Express app
 let server; // http.Server
+let redisClient; // Redis client
 
 function createApp() {
   if (app) return app;
@@ -44,7 +48,7 @@ function createApp() {
   return app;
 }
 
-/**
+/*
  * Initialize DB + models and (optionally) start listening.
  * @param {{listen?: boolean, port?: string|number}} options
  * @returns {Promise<{app: import('express').Express, server?: import('http').Server, db: any}>}
@@ -54,14 +58,31 @@ async function initApp(options = {}) {
 
   const theApp = createApp();
 
-  await db.authenticate();
+  const mongoUri =
+    process.env.MONGO_URI ||
+    `mongodb://admin_user:$admin_pwd@localhost:27017/db_todoapp?authSource=admin`;
 
-  // Initialize all models & expose to controllers
-  const models = initModels(db);
+  try {
+    await mongoose.connect(mongoUri);
+    console.info('✅ Connecté à MongoDB');
+  } catch (err) {
+    console.error('❌ Erreur de connexion MongoDB:', err);
+    throw err;
+  }
+
+  redisClient = createClient({
+    url: `redis://:admin_pwd@localhost:6379`
+  });
+
+  try {
+    await redisClient.connect();
+    console.info('✅ Connecté à Redis');
+  } catch (err) {
+    console.warn('⚠️ Impossible de se connecter à Redis, le cache sera désactivé.');
+  }
+
   theApp.locals.models = models;
-
-  // Sync schema (or run migrations if you prefer)
-  await db.sync();
+  theApp.locals.redis = redisClient;
 
   if (listen) {
     server = theApp.listen(port, () => {
@@ -69,7 +90,7 @@ async function initApp(options = {}) {
     });
   }
 
-  return { app: theApp, server, db };
+  return { app: theApp, server, db: mongoose.connection, redis: redisClient };
 }
 
 /** Gracefully stop the server (useful in tests) */
@@ -77,6 +98,12 @@ async function stopApp() {
   if (server) {
     await new Promise((resolve, reject) => server.close((err) => (err ? reject(err) : resolve())));
     server = undefined;
+  }
+  if (mongoose.connection) {
+    await mongoose.disconnect();
+  }
+  if (redisClient) {
+    await redisClient.quit();
   }
 }
 
