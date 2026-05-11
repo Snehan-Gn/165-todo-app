@@ -17,7 +17,7 @@ const props = defineProps({
     required: true
   },
   todoId: {
-    type: Number,
+    type: String,
     required: true
   },
   todoCompleted: {
@@ -27,13 +27,13 @@ const props = defineProps({
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const toggleTodoCompleted = async (id: any, completed: boolean) => {
-  await todoStore.updateTodo(id, { completed: completed });
+const toggleTodoCompleted = async (value: boolean) => {
+  await todoStore.updateTodo(props.todoId, { completed: value });
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const deleteTodoItem = async (id: any) => {
-  await todoStore.deleteTodo(id);
+const deleteTodoItem = async () => {
+  await todoStore.deleteTodo(props.todoId);
 };
 
 const emit = defineEmits(['update:todoCompleted']);
@@ -41,7 +41,7 @@ const emit = defineEmits(['update:todoCompleted']);
 const todoCompletedLocal = computed({
   get: () => props.todoCompleted,
   set: (value: boolean) => {
-    toggleTodoCompleted(props.todoId, value);
+    toggleTodoCompleted(value);
     emit('update:todoCompleted', value);
   }
 });
@@ -74,7 +74,6 @@ const todoCompletedLocal = computed({
       <div class="flex flex-1 align-middle justify-end">
         <Toggle
           v-model="todoCompletedLocal"
-          @change="toggleTodoCompleted(todoId, todoCompletedLocal)"
           :classes="{
             container:
               'inline-block w-[70px] rounded-full outline-none focus:ring-2 focus:ring-slate-400 focus:ring-opacity-30',
@@ -104,7 +103,7 @@ const todoCompletedLocal = computed({
         <TrashIcon
           data-tooltip-target="tooltip-default"
           class="h-5 w-5 stroke-gray-600 dark:stroke-white hover:stroke-black cursor-pointer"
-          @click="deleteTodoItem(todoId)"
+          @click="deleteTodoItem"
         />
         <div
           id="tooltip-default"
