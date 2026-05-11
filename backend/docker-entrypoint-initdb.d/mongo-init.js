@@ -1,42 +1,45 @@
-db = db.getSiblingDB('db_todoapp');
+db = db.getSiblingDB("db_todoapp");
 
 /**
- * UTILISATEUR 1 : app_backend
- * Rôle : Accès complet pour le fonctionnement de l'API (CRUD, collections, index).
+ * Utilisateur 1 : app_backend
+ * Accès limité à la base de l’application uniquement, l’autorisant à :
+ * - Créer la base de données (automatique lors de l'insertion) ;
+ * - Ajouter des collections à cette base de données ;
+ * - Créer/modifier des indexes ;
+ * - Insérer/mettre à jour/supprimer des données .
  */
 db.createUser({
-  user: 'app_backend',
-  pwd: 'app_password', 
+  user: "app_backend",
+  pwd: "app_password",
   roles: [
-    { role: 'readWrite', db: 'db_todoapp' }, 
-    { role: 'dbAdmin', db: 'db_todoapp' } 
+    { role: "readWrite", db: "db_todoapp" },
+    { role: "dbAdmin", db: "db_todoapp" }
   ]
 });
 
 /**
- * UTILISATEUR 2 : admin_app
- * Rôle : Administrateur de la base de données (index, stats, gestion des utilisateurs).
+ * Utilisateur 2 : admin_app
+ * Administrateur limité à la base de données de l’application :
+ * - Peut créer des index, voir les stats, gérer les schémas ;
+ * - Peut aussi créer des utilisateurs dans la base de l’application uniquement.
  */
 db.createUser({
-  user: 'admin_app',
-  pwd: 'admin_password',
+  user: "admin_app",
+  pwd: "admin_password",
   roles: [
-    { role: 'userAdminInDB', db: 'db_todoapp' }, 
-    { role: 'dbStats', db: 'db_todoapp' }, 
-    { role: 'dbAdmin', db: 'db_todoapp' } 
+    { role: "userAdmin", db: "db_todoapp" },
+    { role: "dbAdmin", db: "db_todoapp" }
   ]
 });
 
 /**
- * UTILISATEUR 3 : backup_user
- * Rôle : Accès lecture seule global pour les sauvegardes (mongodump).
+ * Utilisateur 3 : backup_user
+ * Accès lecture seule global :
  */
-db.getSiblingDB('admin').createUser({
-  user: 'backup_user',
-  pwd: 'backup_password',
+db.getSiblingDB("admin").createUser({
+  user: "backup_user",
+  pwd: "backup_password",
   roles: [
-    { role: 'readAnyDatabase', db: 'admin' } 
+    { role: "readAnyDatabase", db: "admin" }
   ]
 });
-
-print('Initialisation des utilisateurs MongoDB terminée avec succès !');

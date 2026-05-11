@@ -58,7 +58,7 @@ const TodoController = {
       const result = await Todo.findOneAndUpdate(
         { _id: req.params.id, user_id },
         { $set: req.body },
-        { new: true } 
+        { returnDocument: 'after' } 
       );
 
       if (result) {
@@ -95,7 +95,7 @@ const TodoController = {
     try {
       const result = await Todo.find({
         user_id: user_id,
-        $text: { $search: query }
+        text: { $regex: query, $options: 'i' }
       })
         .sort({ date: 1 })
         .select('-user_id');

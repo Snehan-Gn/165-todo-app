@@ -39,6 +39,7 @@ services:
     volumes:
       - mongo_data:/data/db
       - ./data/mongo:/backupdb
+      - ./docker-entrypoint-initdb.d/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
 
 volumes:
   db_data:

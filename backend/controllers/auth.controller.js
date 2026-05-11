@@ -13,34 +13,34 @@ const cleanUser = (user) => {
 const AuthController = {
   loginUser: async (req, res) => {
     const { User } = req.app.locals.models;
-    await User.findOne({
-      where: { email: req.body.email.toLowerCase() }
-    })
-      .then((result) => {
-        if (result) {
-          if (bcrypt.compareSync(req.body.password, result.password)) {
-            const user = cleanUser(result);
-            const token = jsonwebtoken.sign({}, JWT_SECRET, {
-              subject: result.id.toString(),
-              expiresIn: 60 * 60 * 24 * 30 * 6,
-              algorithm: 'RS256'
-            });
-            return res.status(200).json({ user: user, token: token });
-          } else {
-            return res.status(400).json({
-              message: 'Mauvais email ou mot de passe!'
-            });
-          }
+    try {
+      const result = await User.findOne({
+        email: req.body.email.toLowerCase()
+      });
+
+      if (result) {
+        if (bcrypt.compareSync(req.body.password, result.password)) {
+          const user = cleanUser(result);
+          const token = jsonwebtoken.sign({}, JWT_SECRET, {
+            subject: result._id.toString(),
+            expiresIn: 60 * 60 * 24 * 30 * 6,
+            algorithm: 'RS256'
+          });
+          return res.status(200).json({ user: user, token: token });
         } else {
-          return res.status(404).json({
-            message: "Ce compte n'existe pas !"
+          return res.status(400).json({
+            message: 'Mauvais email ou mot de passe!'
           });
         }
-      })
-      .catch((error) => {
-        console.error('LOGIN USER: ', error);
-        return res.status(400).json(null);
-      });
+      } else {
+        return res.status(404).json({
+          message: "Ce compte n'existe pas !"
+        });
+      }
+    } catch (error) {
+      console.error('LOGIN USER: ', error);
+      return res.status(400).json(null);
+    }
   }
 };
 

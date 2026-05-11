@@ -8,8 +8,6 @@ const { createClient } = require('redis');
 // Load env vars
 process.loadEnvFile('./.env');
 
-// const { sequelize: db } = require('./config/database');
-// const { initModels } = require('./models');
 const models = require('./models');
 const router = require('./routes');
 
@@ -60,7 +58,7 @@ async function initApp(options = {}) {
 
   const mongoUri =
     process.env.MONGO_URI ||
-    `mongodb://admin_user:$admin_pwd@localhost:27017/db_todoapp?authSource=admin`;
+    `mongodb://app_backend:app_password@localhost:27017/db_todoapp?authSource=db_todoapp`;
 
   try {
     await mongoose.connect(mongoUri);
@@ -70,8 +68,9 @@ async function initApp(options = {}) {
     throw err;
   }
 
+  const redisUrl = process.env.REDIS_URL || `redis://:admin_pwd@localhost:6379`;
   redisClient = createClient({
-    url: `redis://:admin_pwd@localhost:6379`
+    url: redisUrl
   });
 
   try {
