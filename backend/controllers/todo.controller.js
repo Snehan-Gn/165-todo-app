@@ -1,3 +1,9 @@
+const invalidateTodoCache = async (redis, user_id) => {
+  if (redis?.isOpen) {
+    await redis.del(`todos:${user_id}`);
+  }
+};
+
 const TodoController = {
   createTodo: async (req, res) => {
     const user_id = req.sub;
@@ -13,7 +19,7 @@ const TodoController = {
         user_id
       });
 
-      await redis.del(`todos:${user_id}`);
+      await invalidateTodoCache(redis, user_id);
 
       return res.status(201).json(result);
     } catch (error) {
@@ -29,17 +35,19 @@ const TodoController = {
     const cacheKey = `todos:${user_id}`;
 
     try {
-      const cachedTodos = await redis.get(cacheKey);
-      if (cachedTodos) {
-        console.log('Cache Hit 🚀');
-        return res.status(200).json(JSON.parse(cachedTodos));
+      if (redis?.isOpen) {
+        const cachedTodos = await redis.get(cacheKey);
+        if (cachedTodos) {
+          return res.status(200).json(JSON.parse(cachedTodos));
+        }
       }
 
-      console.log('Cache Miss 🐢');
       const result = await Todo.find({ user_id }).sort({ date: 1 }).select('-user_id');
 
       if (result) {
-        await redis.setEx(cacheKey, 3600, JSON.stringify(result));
+        if (redis?.isOpen) {
+          await redis.setEx(cacheKey, 3600, JSON.stringify(result));
+        }
         return res.status(200).json(result);
       }
       return res.status(404).send();
@@ -62,7 +70,7 @@ const TodoController = {
       );
 
       if (result) {
-        await redis.del(`todos:${user_id}`); 
+        await invalidateTodoCache(redis, user_id);
         return res.status(200).json(result);
       }
       return res.status(404).send();
@@ -79,7 +87,7 @@ const TodoController = {
 
     try {
       await Todo.deleteOne({ _id: req.params.id, user_id });
-      await redis.del(`todos:${user_id}`); 
+      await invalidateTodoCache(redis, user_id);
       return res.status(200).json({ id: req.params.id });
     } catch (error) {
       console.error('DELETE TODO: ', error);
@@ -89,16 +97,23 @@ const TodoController = {
 
   getSearchTodo: async (req, res) => {
     const user_id = req.sub;
-    const query = req.query.q;
+    const query = (req.query.q || '').trim();
     const { Todo } = req.app.locals.models;
 
+    if (!query) {
+      return res.status(400).json({ message: 'Paramètre de recherche manquant' });
+    }
+
     try {
-      const result = await Todo.find({
-        user_id: user_id,
-        text: { $regex: query, $options: 'i' }
-      })
-        .sort({ date: 1 })
-        .select('-user_id');
+      const result = await Todo.find(
+        {
+          user_id,
+          $text: { $search: query }
+        },
+        { score: { $meta: 'textScore' } }
+      )
+        .sort({ score: { $meta: 'textScore' }, date: 1 })
+        .select('-user_id -score');
 
       return res.status(200).json(result);
     } catch (error) {
