@@ -192,6 +192,7 @@ docker exec mongo mongorestore \
 L'IA a été d'une grande aide pour peaufiner le rapport. (Pas le contenu mais le visuel de ce dernier pour qu'il soit plus agréable à lire). 
 
 En ce qui concerne le code, l'IA m'a servi lors des situations où je devais réaliser des tâches redondantes comme supprimé le code lié à MySQL devenu inutile mais aussi pour régler des problèmes mineures dans le code comme des fautes de synthaxe. Le moment où l'IA m'a vraiment aidé c'est pour lier mon mongo-init.js à mon conteneur docker car j'avais fini le fichier pour créer les users mais docker ne reconnaissait pas le fichier donc l'IA m'a aidé pour ce problème en me signalant que le problème venait d'une ligne dans mon docker compose.
+
 ---
 
 ## 9. Conclusion
@@ -199,7 +200,7 @@ En ce qui concerne le code, l'IA m'a servi lors des situations où je devais ré
 Le projet était assez intéressant en soit car il nous a permis de mettre en pratique les connaissances du module car personnellement, bien que j'ai eu une bonne note au test du module, je n'étais pas sûr de pouvoir appliquer ces connaissances. Ce projet était donc parfait pour vraiment voir l'utilité de mongodb et comment s'en servir en situation réel. 
 Le seul point négatif que j'aurais pour le projet est que le projet demande de réaliser pas mal de tâches qui sont assez pénibles pour enlever MySQL et ses dépendences donc je pense que j'aurais préféré juste faire le projet sans toute la partie "Supression de MySQL" car c'était une tâche qui serait vraiment lente sans l'IA. 
 
-Docs complémentaires : [docs/README.md](./docs/README.md) · [backend](./backend/README.md) · [frontend](./frontend/README.md)
+Docs complémentaires : · [backend](./backend/README.md) · [frontend](./frontend/README.md)
 
 ---
 
