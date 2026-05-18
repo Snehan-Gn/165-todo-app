@@ -1,17 +1,4 @@
 services:
-  mysql:
-    image: mysql:lts
-    container_name: mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: admin_pwd
-      MYSQL_DATABASE: db_todoapp
-      MYSQL_USER: app_user
-      MYSQL_PASSWORD: app_pwd
-    ports:
-      - "3306:3306"
-    volumes:
-      - db_data:/var/lib/mysql
-
   redis:
     image: redis/redis-stack:7.2.0-v14
     container_name: redis
@@ -22,7 +9,7 @@ services:
       REDIS_ARGS: "--requirepass admin_pwd --save 20 1 --loglevel warning"
     command: ["/entrypoint.sh", "./conf/redis-stack.conf"]
     healthcheck:
-      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      test: ["CMD", "redis-cli", "-a", "admin_pwd", "ping"]
     volumes:
       - redis_data:/data
 
@@ -39,11 +26,9 @@ services:
     volumes:
       - mongo_data:/data/db
       - ./data/mongo:/backupdb
-      - ./docker-entrypoint-initdb.d/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
 
 volumes:
-  db_data:
-    driver: local
   redis_data:
     driver: local
   mongo_data:
