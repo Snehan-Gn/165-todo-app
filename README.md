@@ -197,8 +197,9 @@ En ce qui concerne le code, l'IA m'a servi lors des situations où je devais ré
 
 ## 9. Conclusion
 
-Le projet était assez intéressant en soit car il nous a permis de mettre en pratique les connaissances du module car personnellement, bien que j'ai eu une bonne note au test du module, je n'étais pas sûr de pouvoir appliquer ces connaissances. Ce projet était donc parfait pour vraiment voir l'utilité de mongodb et comment s'en servir en situation réel. 
-Le seul point négatif que j'aurais pour le projet est que le projet demande de réaliser pas mal de tâches qui sont assez pénibles pour enlever MySQL et ses dépendences donc je pense que j'aurais préféré juste faire le projet sans toute la partie "Supression de MySQL" car c'était une tâche qui serait vraiment lente sans l'IA. 
+Le projet était assez intéressant en soi car il nous a permis de mettre en pratique les connaissances du module. Personnellement, bien que j'aie eu une bonne note au test, je n'étais pas sûr de pouvoir appliquer ces connaissances. Ce projet était donc parfait pour vraiment voir l'utilité de MongoDB et comment s'en servir en situation réelle.
+
+Le seul point négatif que je relèverais est que le projet demande de réaliser pas mal de tâches assez fastidieuses pour enlever MySQL et ses dépendances. Je pense que j'aurais préféré faire le projet sans toute la partie "Suppression de MySQL", car c'était une tâche qui aurait été vraiment lente sans l'aide d'une IA. 
 
 Docs complémentaires : · [backend](./backend/README.md) · [frontend](./frontend/README.md)
 
