@@ -1,1 +1,86 @@
+# Variables d'environnement
 .env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# Dépendances Node.js
+node_modules/
+**/node_modules/
+
+# Builds et artefacts
+dist/
+dist-ssr/
+build/
+*.tsbuildinfo
+backend/coverage/
+frontend/coverage/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Tests et couverture
+coverage/
+.nyc_output/
+*.lcov
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+
+# Sauvegardes MongoDB (générées localement)
+data/mongo/*.gz
+data/mongo/*.archive
+data/mongo/dump/
+
+# Volumes et données locales Docker
+*.pid
+*.seed
+
+# Système d'exploitation
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Éditeurs et IDE
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json.example
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*~
+.project
+.classpath
+.settings/
+
+# Outils divers
+.cache/
+.temp/
+tmp/
+temp/
+*.local
+.eslintcache
+.prettiercache
+
+# Certificats et clés sensibles (hors clés JWT du projet si versionnées volontairement)
+*.pem
+*.key
+!backend/config/keys/*.key
+!backend/config/keys/*.pub
+
+# PM2
+.pm2/
